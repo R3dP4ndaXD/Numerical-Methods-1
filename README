@@ -1,0 +1,114 @@
+------------------------Task1---------------------------------------------------
+  parse_labyrinth:
+  -functie care citeste labiruntul codificat din fisier
+  
+  get_adjacency_matrix:
+  -construieste matrice cu codificarea tuturor starilor
+  -verific fiecare celula a labirintul si adaug in 2 vectorii de indici perechile de coordonate
+   aferente cailor existente exprimate prim matricea de adiacenta
+  -construiec matricea sparse cu elemente la 1 la coodonatele salvate
+  
+  get_link_matrix:
+  -construieste matrice cu codificarea tuturor starilor
+  -verific fiecare celula a labirintul si adaug in 2 vectorii de indici perechile de coordonate
+   aferente cailor existente exprimate prim matricea de adiacenta
+  -la fiecare pas calculez probabilitatile de a alege a fiecarei cai prin numararea cailor posibile si le savez intr-un vector
+  -construiec matricea sparse cu elemente la date de vectorul de probabilitati la coodonatele salvate
+ 
+ get_Jacobi_parameters & perform_iterative
+ -salvez matricea si vecotorul de iterati din matricea de lagaturi
+ -calvulez iterativ probabilitatilele pana ajung la un rezultat convenabil
+ 
+ heuristic_greedy:
+ -am un vector in care construiesc calea
+ -pentru ultimul nod din vector, determin vecinii nevizitati si introdul in vector pe cel cu probabilitatea cea mai mare
+ -daca nu am vecin nevizitatat, elimin ultimul element din cale
+ 
+ decode_path:
+ -elimin starea vin
+ -trec de la codificarea starilor la coodonatele aferente din matrice
+ 
+ ------------------------Task2---------------------------------------------------
+ parse_data_set_file:
+ -pentru fiecare antrenament in parte citeste iesirea si fiecare predicator
+ 
+ prepare_for_regression:
+ -construieste o matrice numerica pe baza matricei de celule convertind stringurile numerice si inlucuind coloanele cu stringuri alfanumerice la 1 sau 2 coloane cu codificarile aferente 
+ -pentru navigarea matricelor, se folosec doua seturi de indexi, unul pentru matricea de celule, si altul pentru matricea construita
+ 
+ linear_regression_cost_function:
+ -pentru fiecare antrenament calculeaza predictia si eroarea: (h(x_i) - y_i)
+ -toate erorile astfel calculata se salveaza intr-un vector pentru care calculam norma si impartim la 2m
+ 
+ parse_csv_file:
+ -matricea de celule citita va fi sub forma de array de array-iuri coloana
+ -Y este chiar prima coloana
+ -parcurg fiecarea coloana din matricea citita si salvez linie cu linie intr-o matrice de celule(cu elemente cell) 
+ 
+ gradient_descent:
+ pentru fiecare componenta j a lui Theta procedam astfel:
+  -pentru fiecare antrenament i calculeaza predictia si eroarea: (h(x_i) - y_i) * x_i(j)
+  -rezultatele asftel obtinute o sa formeze un vector cu (m,1) care dupa transpunere va fi inmultit cu un vector ce contine componenta j a tuturor antrenamentelor
+  -rezultatul obtinut e folosit la actualizarea componentei j a lui Theta
+ tot procesul se repeta de iter ori
+ 
+ normal_equation:
+ -stabilim care sunt matricea sistemului si coloana termenilor liberi
+ -alegem o aproximare initiala a solutiei sistemului
+ -verificam ca matricea sistemului e pozitiv definita
+ -aplicam metoda gradientului conjugat
+ 
+ lasso_regression_cost_function:
+ -pentru fiecare antrenament calculeaza predictia si eroarea: (h(x_i) - y_i)
+ -toate erorile astfel calculata se salveaza intr-un vector pentru care calculam norma si impartim la m
+ -se calculeaza norma_1 a vectorului de weights si se adauga cu o anumita proportie rezultatului obtinut anterior
+ 
+ ridge_regression_cost_function
+ -pentru fiecare antrenament calculeaza predictia si eroarea: (h(x_i) - y_i)
+ -toate erorile astfel calculata se salveaza intr-un vector pentru care calculam norma si impartim la 2m
+ -se calculeaza norma_2 a vectorului de weights si se adauga cu o anumita proportie rezultatului obtinut anteri
+ 
+  ------------------------Task3---------------------------------------------------
+  
+  load_dataset:
+  -incarca in memorie fisierul
+  -imparte structura in cele doua componente(matricea cu datele de antrenamet si vectorul de labels)
+  
+  split_dataset:
+  -pun laolalta intrarile si labelurile asociate
+  -reasez intr-o ordine aleatoare setul de date
+  -calculeaza cat de mare va fi parte pentru antrenament
+  -prima parte a setului e aleasa pentru antrenamet, iar a doua pentru test
+  
+  initialize_weights:
+  -calculez limita intervalului
+  -contruiesc o matrice cu elemente aleatoare intre (0, 1) si dupa trec elementele in intervalul (-e, e)
+  
+  cost_funtion:
+  -selectez elementele corespunzatoare fiecarei din matricele Theta_1 si Theta_2 si le reconstruiesc pe COLOANE!
+  
+  1.Forward propagation:
+  -pregatesc matricea activarilor in layerul de input (+ bias)
+  -aplic prima transformare prin care obtin rezultatele layer-ului intermediar preactivare
+  -activez rezultatele din layer-ul intermediar
+  -adaug componenta de bias
+  -aplic a doua transformare prin care obtin rezultatele layer-ul de output practivare
+  -activez rezultatele finale => matrice de predictii cu dimensiunea output_layer_size * m
+  -expandez vectorului de labels la o matrice in formatul matricei de predictii
+  
+  2.In calculul costului ma intereseaza sa fac doar operatii intre coloanele cu acelasi index din matricea de labels si matrice de predictii
+   adica diagonala principala a matricei rezultate din produsului a celor doua matrice, care ulterior se insumeaza, adica operatia de trace.
+   Cu produsul Haramald fac exclusiv inmultirile pentru determinarea diagonalei principale
+  
+  3.Backpropagation
+  -determin eroarea în layer-ul de output
+  -acumulez gradientii trecerii de la layer-ul intermediar la layer-ul de output
+  -determin erorea în layer-ul intermediar
+  -elimin componenta de bias din eroarea antrior calculata
+  -adaug termenul corespunzator regularizari
+  
+  predict_classes:
+  (in prealabil se foloseste functia cost_funtion pentru antrenarea retelei neurale, iar acum testez functionarea retelei)
+  -selectez elementele corespunzatoare fiecarei din matricele Theta_1 si Theta_2 si le reconstruiesc pe COLOANE
+  -aplic forward propagation
+  -pentru fiecare vector de predictii(coloana a matricei de predictii) labelul care se asociaza e dat de indexul liniei ce contine probabilitatea cea mai mare
